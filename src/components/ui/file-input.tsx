@@ -9,6 +9,7 @@ import {
 } from "react"
 import { useToast } from "@/src/hooks/use-toast"
 import ImageUpload from "@/ui/image-upload"
+import { PlusCircleIcon } from "lucide-react"
 
 import { maxImgSize } from "@/config/image"
 import { cn } from "@/lib/utils"
@@ -97,20 +98,29 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
         <label
           htmlFor="dropzone-file"
           className={cn(
-            "relative h-full flex flex-col items-center justify-center w-full aspect-video border-2 border-slate-300 border-dashed rounded-lg cursor-pointer dark:hover:bg-bray-800 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-slate-800 transition",
+            "group relative h-full flex flex-col items-center justify-center w-full aspect-video border-2 border-slate-300 border-dashed rounded-lg dark:border-gray-600 transition",
             { "dark:border-slate-400 dark:bg-slate-800": dragActive },
             { "h-fit aspect-auto": !noInput },
-            { "items-start justify-start": !noInput }
+            { "items-start justify-start": !noInput },
+            { "dark:hover:border-gray-500 dark:hover:bg-slate-800": noInput }
           )}
         >
           <div
             className={cn(
-              "w-full h-full flex flex-col items-center justify-center",
+              "relative w-full h-full flex flex-col items-center justify-center",
               { "items-start": !noInput }
             )}
           >
             {noInput ? (
               <>
+                <div
+                  className="absolute inset-0 cursor-pointer"
+                  onDragEnter={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDragOver={handleDrag}
+                  onDrop={handleDrop}
+                />
+
                 <svg
                   aria-hidden="true"
                   className="w-10 h-10 mb-3 text-gray-400"
@@ -134,6 +144,17 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   up to 5 images, {(maxImgSize / 1000000).toFixed(0)}MB per file
                 </p>
+
+                <input
+                  {...props}
+                  ref={ref}
+                  multiple
+                  onChange={handleChange}
+                  accept="image/jpeg, image/jpg, image/png"
+                  id="dropzone-file"
+                  type="file"
+                  className="hidden"
+                />
               </>
             ) : (
               <div className="flex flex-col w-full h-full">
@@ -169,38 +190,44 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y dark:divide-slate-600">
+                        <tbody className="relative divide-y dark:divide-slate-600">
                           {input.map((file, index) => (
                             <ImageUpload key={index} image={file} />
                           ))}
                         </tbody>
                       </table>
+
+                      <label
+                        htmlFor="dropzone-file-images-present"
+                        onClick={() => console.log("div licked")}
+                        className="relative cursor-pointer group hover:border-gray-500 hover:dark:bg-slate-800 transition flex justify-center py-4 border-t border-slate-600"
+                      >
+                        <PlusCircleIcon className="group-hover:text-slate-400 transition stroke-1 w-12 h-12 dark:text-slate-500" />
+                        <input
+                          {...props}
+                          ref={ref}
+                          multiple
+                          onChange={handleChange}
+                          accept="image/jpeg, image/jpg, image/png"
+                          type="file"
+                          id="dropzone-file-images-present"
+                          onClick={() => console.log("inpuit licked")}
+                          className="relative z-20 hidden"
+                        />
+                        <div
+                          className="absolute inset-0"
+                          onDragEnter={handleDrag}
+                          onDragLeave={handleDrag}
+                          onDragOver={handleDrag}
+                          onDrop={handleDrop}
+                        />
+                      </label>
                     </div>
                   </div>
                 </div>
               </div>
             )}
           </div>
-          <input
-            {...props}
-            ref={ref}
-            multiple
-            onChange={handleChange}
-            accept="image/jpeg, image/jpg, image/png"
-            id="dropzone-file"
-            type="file"
-            className="hidden"
-          />
-
-          {true && (
-            <div
-              className="absolute inset-0"
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
-              onDrop={handleDrop}
-            ></div>
-          )}
         </label>
       </form>
     )

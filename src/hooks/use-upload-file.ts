@@ -1,10 +1,12 @@
-import axios, { AxiosError } from "axios"
 import { useEffect, useReducer, useRef } from "react"
+import axios, { AxiosError } from "axios"
 
+import { toBase64 } from "@/lib/utils"
 import { useToast } from "./use-toast"
 
 interface State<T> {
   data?: T
+  isLoading: boolean
   progress?: number
   error?: "TOO_LARGE" | "INTERNAL_SERVER_ERROR"
 }
@@ -27,6 +29,7 @@ export const useUploadFile = <T = unknown>(url: string, file: File) => {
 
   const initialState: State<T> = {
     error: undefined,
+    isLoading: true,
     progress: undefined,
     data: undefined,
   }
@@ -37,9 +40,9 @@ export const useUploadFile = <T = unknown>(url: string, file: File) => {
       case "loading":
         return { ...state }
       case "fetched":
-        return { ...state, data: action.payload }
+        return { ...state, data: action.payload, isLoading: false }
       case "error":
-        return { ...state, error: action.payload }
+        return { ...state, error: action.payload, isLoading: false }
       case "progress":
         return { ...state, progress: action.payload }
       default:
@@ -68,10 +71,13 @@ export const useUploadFile = <T = unknown>(url: string, file: File) => {
         const formData = new FormData()
         formData.append("file", file)
 
-        const res = await axios.post(url, formData, {
+        const base64 = await toBase64(file)
+
+        const res = await axios.post(url, base64, {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/octet-stream",
           },
+
           onUploadProgress: (progressEvent) => {
             const percentCompleted = Math.round(
               (progressEvent.loaded * 100) / progressEvent.total!
