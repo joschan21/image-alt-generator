@@ -73,6 +73,7 @@ cn("px-2 bg-slate-100 py-2 bg-slate-200")
 // Outputs `p-2 bg-slate-200`
 ```
 
-## License
+## License & Credits
 
-Licensed under the [MIT license](https://github.com/shadcn/ui/blob/main/LICENSE.md).
+Licensed under the [MIT license](https://opensource.org/license/mit/).
+Boilerplate project template made by [shadcn](https://github.com/shadcn/next-template)
