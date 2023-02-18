@@ -1,4 +1,4 @@
-import { NextApiResponse } from "next"
+import { NextApiRequest, NextApiResponse } from "next"
 
 export const config = {
   api: {
@@ -8,6 +8,6 @@ export const config = {
   },
 }
 
-export default async function handler(res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).json({ status: "success" })
 }

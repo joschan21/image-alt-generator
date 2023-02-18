@@ -1,8 +1,8 @@
 import { useState } from "react"
+import { useToast } from "@/hooks/use-toast"
 import axios from "axios"
 
 import { maxImgSize } from "@/config/image"
-import { useToast } from "@/hooks/use-toast"
 
 export const useUploadForm = (url: string) => {
   const { toast } = useToast()
@@ -43,6 +43,8 @@ export const useUploadForm = (url: string) => {
         },
       })
     } catch (error) {
+      // TODO: Handle internal server error too
+
       toast({
         title: `This image is too large (${(totalSize / 1024 / 1024).toFixed(
           1
