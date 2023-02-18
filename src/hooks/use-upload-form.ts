@@ -1,63 +1,126 @@
-import { useState } from "react"
-import { useToast } from "@/hooks/use-toast"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
+import { useEffect, useReducer, useRef } from "react"
 
-import { maxImgSize } from "@/config/image"
+import { useToast } from "./use-toast"
 
-export const useUploadForm = (url: string) => {
+interface State<T> {
+  data?: T
+  progress?: number
+  error?: "TOO_LARGE" | "INTERNAL_SERVER_ERROR"
+}
+
+type Cache<T> = { [url: string]: T }
+
+// discriminated union type
+type Action<T> =
+  | { type: "loading" }
+  | { type: "fetched"; payload: T }
+  | { type: "error"; payload: "TOO_LARGE" | "INTERNAL_SERVER_ERROR" }
+  | { type: "progress"; payload: number }
+
+export const useUploadFile = <T = unknown>(url: string, file: File) => {
   const { toast } = useToast()
-  const [isSuccess, setIsSuccess] = useState(false)
-  const [progress, setProgress] = useState(0)
-  const [isError, setIsError] = useState<boolean>(false)
+  const cache = useRef<Cache<T>>({})
 
-  const uploadForm = async (formData: FormData) => {
-    // validate formData doesn't exceed max size
-    const size = Array.from(formData.entries(), ([key, value]) => ({
-      [key]: {
-        ContentLength: typeof value === "string" ? value.length : value.size,
-      },
-    }))
+  // Used to prevent state update if the component is unmounted
+  const cancelRequest = useRef<boolean>(false)
 
-    const totalSize = size.reduce((acc, curr) => {
-      const key = Object.keys(curr)[0]
-      return acc + curr[key].ContentLength
-    }, 0)
-
-    // upload form
-    try {
-      if (totalSize > maxImgSize) throw new Error()
-
-      await axios.post(url, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (progressEvent) => {
-          const progress =
-            (progressEvent.loaded / (progressEvent?.total ?? 100)) * 50
-          setProgress(progress)
-        },
-        onDownloadProgress: (progressEvent) => {
-          const progress =
-            50 + (progressEvent.loaded / (progressEvent.total ?? 100)) * 50
-          setProgress(progress)
-        },
-      })
-    } catch (error) {
-      // TODO: Handle internal server error too
-
-      toast({
-        title: `This image is too large (${(totalSize / 1024 / 1024).toFixed(
-          1
-        )}MB).`,
-        description: "Please compress this image first.",
-      })
-      setIsError(true)
-
-      return
-    }
-
-    setIsSuccess(true)
+  const initialState: State<T> = {
+    error: undefined,
+    progress: undefined,
+    data: undefined,
   }
 
-  return { uploadForm, isSuccess, isError, progress }
+  // Keep state logic separated
+  const fetchReducer = (state: State<T>, action: Action<T>): State<T> => {
+    switch (action.type) {
+      case "loading":
+        return { ...state }
+      case "fetched":
+        return { ...state, data: action.payload }
+      case "error":
+        return { ...state, error: action.payload }
+      case "progress":
+        return { ...state, progress: action.payload }
+      default:
+        return state
+    }
+  }
+
+  const [state, dispatch] = useReducer(fetchReducer, initialState)
+
+  useEffect(() => {
+    // Do nothing if the url is not given
+    if (!url) return
+
+    cancelRequest.current = false
+
+    const fetchData = async () => {
+      dispatch({ type: "loading" })
+
+      // If a cache exists for this url, return it
+      if (cache.current[url]) {
+        dispatch({ type: "fetched", payload: cache.current[url] })
+        return
+      }
+
+      try {
+        const formData = new FormData()
+        formData.append("file", file)
+
+        const res = await axios.post(url, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total!
+            )
+
+            dispatch({ type: "progress", payload: percentCompleted })
+          },
+        })
+
+        const data = res.data as T
+        cache.current[url] = data
+        if (cancelRequest.current) return
+
+        dispatch({ type: "fetched", payload: data })
+      } catch (error) {
+        if (cancelRequest.current) return
+
+        if (error instanceof AxiosError && error.response?.status === 413) {
+          dispatch({ type: "error", payload: "TOO_LARGE" })
+
+          toast({
+            title: `This image is too large (${(
+              file.size /
+              1024 /
+              1024
+            ).toFixed(1)}MB).`,
+            description: "Please compress this image first.",
+          })
+
+          return
+        }
+
+        dispatch({ type: "error", payload: "INTERNAL_SERVER_ERROR" })
+
+        toast({
+          title: "Something went wrong.",
+          description: "Please try again later.",
+        })
+      }
+    }
+
+    void fetchData()
+
+    // Use the cleanup function for avoiding a possibly...
+    // ...state update after the component was unmounted
+    return () => {
+      cancelRequest.current = true
+    }
+  }, [url])
+
+  return state
 }

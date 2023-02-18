@@ -2,9 +2,11 @@
 
 import { forwardRef, useEffect, useState } from "react"
 import Image from "next/image"
-import { useUploadForm } from "@/src/hooks/use-upload-form"
+// import { useUploadForm } from "@/src/hooks/use-upload-form"
+import { useUploadFile } from "@/src/hooks/use-upload-form"
 import { Progress } from "@/ui/progress"
 
+import { ImageResponseData } from "@/types/api/image"
 import { cn } from "@/lib/utils"
 
 interface ImageUploadProps extends React.HTMLAttributes<HTMLTableRowElement> {
@@ -15,21 +17,15 @@ const ImageUpload = forwardRef<HTMLTableRowElement, ImageUploadProps>(
   ({ image, className, ...props }, ref) => {
     const [previewUrl, setPreviewUrl] = useState<string>("")
 
-    const { uploadForm, isError, progress } =
-      useUploadForm("/api/image/process")
+    const { data, progress, error } = useUploadFile<ImageResponseData>(
+      "/api/image/process",
+      image
+    )
 
     // generate preview url
     useEffect(() => {
       setPreviewUrl(URL.createObjectURL(image))
       return () => URL.revokeObjectURL(previewUrl)
-    }, [image])
-
-    // upload image
-    useEffect(() => {
-      const formData = new FormData()
-      formData.append("image", image)
-
-      uploadForm(formData)
     }, [image])
 
     return (
@@ -56,7 +52,7 @@ const ImageUpload = forwardRef<HTMLTableRowElement, ImageUploadProps>(
           <Progress
             className={cn("w-full h-2")}
             value={progress}
-            isError={isError}
+            isError={!!error}
           />
         </td>
       </tr>
