@@ -59,7 +59,7 @@ export const useUploadFile = <T = unknown>(url: string, file: File) => {
       dispatch({ type: "loading" })
 
       // If a cache exists for this url, return it
-      if (cache.current[url]) {
+      if (cache.current[file.name]) {
         dispatch({ type: "fetched", payload: cache.current[url] })
         return
       }
@@ -82,7 +82,7 @@ export const useUploadFile = <T = unknown>(url: string, file: File) => {
         })
 
         const data = res.data as T
-        cache.current[url] = data
+        cache.current[file.name] = data
         if (cancelRequest.current) return
 
         dispatch({ type: "fetched", payload: data })
