@@ -68,9 +68,6 @@ export const useUploadFile = <T = unknown>(url: string, file: File) => {
       }
 
       try {
-        const formData = new FormData()
-        formData.append("file", file)
-
         const base64 = await toBase64(file)
 
         const res = await axios.post(url, base64, {
@@ -94,6 +91,8 @@ export const useUploadFile = <T = unknown>(url: string, file: File) => {
         dispatch({ type: "fetched", payload: data })
       } catch (error) {
         if (cancelRequest.current) return
+
+        console.log(error)
 
         if (error instanceof AxiosError && error.response?.status === 413) {
           dispatch({ type: "error", payload: "TOO_LARGE" })
@@ -121,7 +120,7 @@ export const useUploadFile = <T = unknown>(url: string, file: File) => {
 
     void fetchData()
 
-    // Use the cleanup function for avoiding a possibly...
+    // Use the cleanup function for avoiding a possible...
     // ...state update after the component was unmounted
     return () => {
       cancelRequest.current = true

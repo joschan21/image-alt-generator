@@ -80,6 +80,22 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
     const handleDrop = (e: DragEvent<HTMLDivElement>) => {
       e.preventDefault()
       e.stopPropagation()
+
+      // validate file type
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        const files = Array.from(e.dataTransfer.files)
+        const invalidFiles = files.filter(
+          (file) => !file.type.startsWith("image/")
+        )
+        if (invalidFiles.length > 0) {
+          toast({
+            title: "Invalid file type",
+            description: "Only image files are allowed.",
+          })
+          return
+        }
+      }
+
       setDragActive(false)
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
         // at least one file has been selected
