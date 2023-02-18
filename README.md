@@ -1,6 +1,6 @@
-# next-template
+# Next alt generator
 
-A Next.js 13 template for building apps with Radix UI and Tailwind CSS.
+A Next.js 13 project for generating image alt tags automatically and in bulk.
 
 ## Features
 
