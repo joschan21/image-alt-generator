@@ -5,9 +5,8 @@ interface SiteConfig {
   description: string
   mainNav: NavItem[]
   links: {
-    twitter: string
+    youtube: string
     github: string
-    docs: string
   }
 }
 
@@ -21,8 +20,7 @@ export const siteConfig: SiteConfig = {
     },
   ],
   links: {
-    twitter: "https://twitter.com/shadcn",
-    github: "https://github.com/shadcn/ui",
-    docs: "https://ui.shadcn.com",
+    github: "https://github.com/joschan21/image-alt-generator",
+    youtube: "https://www.youtube.com/@joshtriedcoding",
   },
 }
