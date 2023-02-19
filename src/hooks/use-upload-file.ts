@@ -90,6 +90,7 @@ export const useUploadFile = <T = unknown>(url: string, file: File) => {
 
         dispatch({ type: "fetched", payload: data })
       } catch (error) {
+        console.log(error)
         if (cancelRequest.current) return
 
         if (error instanceof AxiosError && error.response?.status === 413) {

@@ -78,7 +78,7 @@ async function handler(
 
         break
       } else if (jsonFinalResponse.status === "failed") {
-        res.status(500).json({ success: false, alt: "" })
+        res.status(503).json({ success: false, alt: "" })
         break
       } else {
         await new Promise((resolve) => setTimeout(resolve, 1000))
