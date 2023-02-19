@@ -1,6 +1,16 @@
-import { FC } from "react"
 import { Button, buttonVariants } from "@/ui/button"
 import { FileInput } from "@/ui/file-input"
+import { FC } from "react"
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip"
+
+export const metadata = {
+  title: "ImageToAlt - Home",
+}
 
 const page: FC = () => {
   return (
@@ -19,12 +29,21 @@ const page: FC = () => {
         <FileInput />
       </div>
 
-      <Button
-        disabled
-        className={buttonVariants({ size: "lg", className: "w-fit" })}
-      >
-        Download as CSV
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="w-fit">
+            <Button
+              disabled
+              className={buttonVariants({ size: "lg", className: "w-fit" })}
+            >
+              Download as CSV
+            </Button>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Available soon</p>
+        </TooltipContent>
+      </Tooltip>
     </section>
   )
 }

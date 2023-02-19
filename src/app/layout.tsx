@@ -1,11 +1,12 @@
 import { Inter as FontSans } from "@next/font/google"
 
 import "@/styles/globals.css"
-import { Toaster } from "@/ui/toaster"
 import Head from "next/head"
+import { Toaster } from "@/ui/toaster"
 
 import { cn } from "@/lib/utils"
 import { SiteHeader } from "../components/site-header"
+import { TooltipProvider } from "../components/ui/tooltip"
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -32,8 +33,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <body className="min-h-screen bg-white font-sans text-slate-900 antialiased dark:bg-slate-900 dark:text-slate-50">
           <Toaster />
           <SiteHeader />
-
-          <main>{children}</main>
+          <TooltipProvider>
+            <main>{children}</main>
+          </TooltipProvider>
         </body>
       </html>
     </>

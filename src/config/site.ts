@@ -11,7 +11,7 @@ interface SiteConfig {
 }
 
 export const siteConfig: SiteConfig = {
-  name: "Imgalt",
+  name: "ImageToAlt",
   description: "Easily create alt-descriptions for your images.",
   mainNav: [
     {
