@@ -22,9 +22,17 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ImageResponseData>
 ) {
-  await new Promise((resolve) => setTimeout(resolve, 3000))
-
+  if (!req.body)
+    return res
+      .status(400)
+      .json({ success: false, alt: "", message: "No image data" })
   const imageBase64 = req.body
+
+  const amplifyEnvWorking = !!process.env.REPLICATE_API_KEY
+  if (!amplifyEnvWorking)
+    return res
+      .status(500)
+      .json({ success: false, alt: "", message: "No env variable recognized" })
 
   try {
     const startResponse = await fetch(
@@ -74,18 +82,25 @@ async function handler(
         res.status(200).json({
           success: true,
           alt: altText,
+          message: "Alt text generated successfully",
         })
 
         break
       } else if (jsonFinalResponse.status === "failed") {
-        res.status(503).json({ success: false, alt: "" })
+        res.status(503).json({
+          success: false,
+          alt: "",
+          message: "Image could not be processed",
+        })
         break
       } else {
         await new Promise((resolve) => setTimeout(resolve, 1000))
       }
     }
   } catch (error) {
-    res.status(500).json({ success: false, alt: "" })
+    res
+      .status(500)
+      .json({ success: false, alt: "", message: "Internal server error" })
   }
 }
 
