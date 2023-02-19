@@ -58,7 +58,7 @@ async function handler(
     let altText: string | null = null
     while (!altText) {
       // Poll in 1s intervals until the alt text is ready
-      console.log("polling for result...")
+
       let finalResponse = await fetch(endpointUrl, {
         method: "GET",
         headers: {

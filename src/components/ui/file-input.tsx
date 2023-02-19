@@ -215,7 +215,6 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
 
                       <label
                         htmlFor="dropzone-file-images-present"
-                        onClick={() => console.log("div licked")}
                         className="relative cursor-pointer group hover:border-gray-500 hover:dark:bg-slate-800 transition flex justify-center py-4 border-t border-slate-600"
                       >
                         <PlusCircleIcon className="group-hover:text-slate-400 transition stroke-1 w-12 h-12 dark:text-slate-500" />
@@ -227,7 +226,6 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
                           accept="image/jpeg, image/jpg, image/png"
                           type="file"
                           id="dropzone-file-images-present"
-                          onClick={() => console.log("inpuit licked")}
                           className="relative z-20 hidden"
                         />
                         <div

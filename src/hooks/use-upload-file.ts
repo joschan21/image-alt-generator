@@ -92,8 +92,6 @@ export const useUploadFile = <T = unknown>(url: string, file: File) => {
       } catch (error) {
         if (cancelRequest.current) return
 
-        console.log(error)
-
         if (error instanceof AxiosError && error.response?.status === 413) {
           dispatch({ type: "error", payload: "TOO_LARGE" })
 
