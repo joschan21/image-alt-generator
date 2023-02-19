@@ -1,15 +1,15 @@
 "use client"
 
+import { useToast } from "@/src/hooks/use-toast"
+import ImageUpload from "@/ui/image-upload"
+import { PlusCircleIcon } from "lucide-react"
 import {
   forwardRef,
   useReducer,
   useState,
   type ChangeEvent,
-  type DragEvent,
+  type DragEvent
 } from "react"
-import { useToast } from "@/src/hooks/use-toast"
-import ImageUpload from "@/ui/image-upload"
-import { PlusCircleIcon } from "lucide-react"
 
 import { maxImgSize } from "@/config/image"
 import { cn } from "@/lib/utils"
@@ -250,3 +250,4 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
 FileInput.displayName = "FileInput"
 
 export { FileInput }
+
