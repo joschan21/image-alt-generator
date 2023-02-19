@@ -7,7 +7,7 @@ import { useUploadFile } from "@/src/hooks/use-upload-file"
 import { Progress } from "@/ui/progress"
 import { Loader2 } from "lucide-react"
 
-import { ImageResponseData } from "@/types/api/image"
+import { ImageResponseData } from "@/src/types/api/image"
 import { cn } from "@/lib/utils"
 
 interface ImageUploadProps extends React.HTMLAttributes<HTMLTableRowElement> {

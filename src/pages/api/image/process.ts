@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next"
 
-import { ImageResponseData } from "@/types/api/image"
+import { ImageResponseData } from "@/src/types/api/image"
 import { withMethods } from "@/lib/api-middlewares/with-methods"
 
 type PartialReplicateResponse = {

@@ -1,8 +1,8 @@
 import { Inter as FontSans } from "@next/font/google"
 
 import "@/styles/globals.css"
-import Head from "next/head"
 import { Toaster } from "@/ui/toaster"
+import Head from "next/head"
 
 import { cn } from "@/lib/utils"
 import { SiteHeader } from "../components/site-header"
