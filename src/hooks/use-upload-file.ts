@@ -1,7 +1,6 @@
 import { useEffect, useReducer, useRef } from "react"
-import axios, { AxiosError } from "axios"
+import axios from "axios"
 
-import { toBase64 } from "@/lib/utils"
 import { useToast } from "./use-toast"
 
 interface State<T> {
@@ -11,8 +10,6 @@ interface State<T> {
   error?: "TOO_LARGE" | "INTERNAL_SERVER_ERROR"
 }
 
-type Cache<T> = { [url: string]: T }
-
 // discriminated union type
 type Action<T> =
   | { type: "loading" }
@@ -20,16 +17,24 @@ type Action<T> =
   | { type: "error"; payload: "TOO_LARGE" | "INTERNAL_SERVER_ERROR" }
   | { type: "progress"; payload: number }
 
-export const useUploadFile = <T = unknown>(url: string, file: File) => {
+type Options = {
+  disabled: boolean | undefined
+}
+
+export const useUploadFile = <T = unknown>(
+  url: string,
+  resourceUrl: string,
+  options: Options
+) => {
   const { toast } = useToast()
-  const cache = useRef<Cache<T>>({})
+  const { disabled } = options
 
   // Used to prevent state update if the component is unmounted
   const cancelRequest = useRef<boolean>(false)
 
   const initialState: State<T> = {
     error: undefined,
-    isLoading: true,
+    isLoading: false,
     progress: undefined,
     data: undefined,
   }
@@ -38,7 +43,7 @@ export const useUploadFile = <T = unknown>(url: string, file: File) => {
   const fetchReducer = (state: State<T>, action: Action<T>): State<T> => {
     switch (action.type) {
       case "loading":
-        return { ...state }
+        return { ...state, isLoading: true }
       case "fetched":
         return { ...state, data: action.payload, isLoading: false }
       case "error":
@@ -61,18 +66,10 @@ export const useUploadFile = <T = unknown>(url: string, file: File) => {
     const fetchData = async () => {
       dispatch({ type: "loading" })
 
-      // If a cache exists for this url, return it
-      if (cache.current[file.name]) {
-        dispatch({ type: "fetched", payload: cache.current[url] })
-        return
-      }
-
       try {
-        const base64 = await toBase64(file)
-
-        const res = await axios.post(url, base64, {
+        const res = await axios.post(url, resourceUrl, {
           headers: {
-            "Content-Type": "application/octet-stream",
+            "Content-Type": "application/json",
           },
 
           onUploadProgress: (progressEvent) => {
@@ -85,28 +82,11 @@ export const useUploadFile = <T = unknown>(url: string, file: File) => {
         })
 
         const data = res.data as T
-        cache.current[file.name] = data
         if (cancelRequest.current) return
 
         dispatch({ type: "fetched", payload: data })
       } catch (error) {
-        console.log(error)
         if (cancelRequest.current) return
-
-        if (error instanceof AxiosError && error.response?.status === 413) {
-          dispatch({ type: "error", payload: "TOO_LARGE" })
-
-          toast({
-            title: `This image is too large (${(
-              file.size /
-              1024 /
-              1024
-            ).toFixed(1)}MB).`,
-            description: "Please compress this image first.",
-          })
-
-          return
-        }
 
         dispatch({ type: "error", payload: "INTERNAL_SERVER_ERROR" })
 
@@ -117,7 +97,7 @@ export const useUploadFile = <T = unknown>(url: string, file: File) => {
       }
     }
 
-    void fetchData()
+    if (!disabled) void fetchData()
 
     // Use the cleanup function for avoiding a possible...
     // ...state update after the component was unmounted

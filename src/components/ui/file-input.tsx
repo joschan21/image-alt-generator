@@ -1,27 +1,36 @@
 "use client"
 
-import { useToast } from "@/src/hooks/use-toast"
-import ImageUpload from "@/ui/image-upload"
-import { PlusCircleIcon } from "lucide-react"
 import {
   forwardRef,
   useReducer,
   useState,
   type ChangeEvent,
-  type DragEvent
+  type DragEvent,
 } from "react"
+import { ALLOWED_FILE_TYPES } from "@/src/config/s3"
+import { useS3Upload } from "@/src/hooks/use-s3-upload"
+import { useToast } from "@/src/hooks/use-toast"
+import ImageUpload from "@/ui/image-upload"
 
-import { maxImgSize } from "@/config/image"
-import { cn } from "@/lib/utils"
+import { MAX_FILE_SIZE } from "@/config/image"
+import { cn, validateFileType } from "@/lib/utils"
+import { Icons } from "../icons"
+
+interface FileWithUrl {
+  name: string
+  getUrl: string
+  size: number
+  error?: boolean | undefined
+}
 
 // Reducer action(s)
 const addFilesToInput = () => ({
   type: "ADD_FILES_TO_INPUT" as const,
-  payload: [] as File[],
+  payload: [] as FileWithUrl[],
 })
 
 type Action = ReturnType<typeof addFilesToInput>
-type State = File[]
+type State = FileWithUrl[]
 
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {}
@@ -29,12 +38,13 @@ export interface InputProps
 const FileInput = forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => {
     const { toast } = useToast()
+    const { s3Upload } = useS3Upload()
     const [dragActive, setDragActive] = useState<boolean>(false)
     const [input, dispatch] = useReducer((state: State, action: Action) => {
       switch (action.type) {
         case "ADD_FILES_TO_INPUT": {
           // do not allow more than 5 files to be uploaded at once
-          if (state.length + action.payload.length > 5) {
+          if (state.length + action.payload.length > 10) {
             toast({
               title: "Too many files",
               description:
@@ -64,44 +74,77 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
     }
 
     // triggers when file is selected with click
-    const handleChange = function (e: ChangeEvent<HTMLInputElement>) {
+    const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
       e.preventDefault()
-      if (e.target.files && e.target.files[0]) {
-        // at least one file has been selected
-        addFilesToState(Array.from(e.target.files))
+      try {
+        if (e.target.files && e.target.files[0]) {
+          // at least one file has been selected
+
+          // validate file type
+          const valid = validateFileType(e.target.files[0])
+          if (!valid) {
+            toast({
+              title: "Invalid file type",
+              description: "Please upload a valid file type.",
+            })
+            return
+          }
+
+          const { getUrl, error } = await s3Upload(e.target.files[0])
+          if (!getUrl || error) throw new Error("Error uploading file")
+
+          const { name, size } = e.target.files[0]
+
+          addFilesToState([{ name, getUrl, size }])
+        }
+      } catch (error) {
+        // already handled
+        console.log(error)
       }
     }
 
-    const addFilesToState = (files: File[]) => {
+    const addFilesToState = (files: FileWithUrl[]) => {
       dispatch({ type: "ADD_FILES_TO_INPUT", payload: files })
     }
 
     // triggers when file is dropped
-    const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    const handleDrop = async (e: DragEvent<HTMLDivElement>) => {
       e.preventDefault()
       e.stopPropagation()
 
       // validate file type
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
         const files = Array.from(e.dataTransfer.files)
-        const invalidFiles = files.filter(
-          (file) => !file.type.startsWith("image/")
-        )
-        if (invalidFiles.length > 0) {
+        const validFiles = files.filter((file) => validateFileType(file))
+
+        if (files.length !== validFiles.length) {
           toast({
             title: "Invalid file type",
             description: "Only image files are allowed.",
           })
-          return
         }
-      }
 
-      setDragActive(false)
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        // at least one file has been selected
-        addFilesToState(Array.from(e.dataTransfer.files))
+        try {
+          const filesWithUrl = await Promise.all(
+            validFiles.map(async (file) => {
+              const { name, size } = file
+              const { getUrl, error } = await s3Upload(file)
 
-        e.dataTransfer.clearData()
+              if (!getUrl || error) return { name, size, getUrl: "", error }
+              return { name, size, getUrl }
+            })
+          )
+
+          setDragActive(false)
+
+          // at least one file has been selected
+          addFilesToState(filesWithUrl)
+
+          e.dataTransfer.clearData()
+        } catch (error) {
+          // already handled
+          console.log(error)
+        }
       }
     }
 
@@ -158,7 +201,8 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
                   and drop
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  up to 5 images, {(maxImgSize / 1000000).toFixed(0)}MB per file
+                  up to 5 images, {(MAX_FILE_SIZE / 1000000).toFixed(0)}MB per
+                  file
                 </p>
 
                 <input
@@ -208,7 +252,13 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
                         </thead>
                         <tbody className="relative divide-y dark:divide-slate-600">
                           {input.map((file, index) => (
-                            <ImageUpload key={index} image={file} />
+                            <ImageUpload
+                              key={index}
+                              error={file.error}
+                              getUrl={file.getUrl}
+                              name={file.name}
+                              size={file.size}
+                            />
                           ))}
                         </tbody>
                       </table>
@@ -217,7 +267,7 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
                         htmlFor="dropzone-file-images-present"
                         className="relative cursor-pointer group hover:border-gray-500 hover:dark:bg-slate-800 transition flex justify-center py-4 border-t border-slate-600"
                       >
-                        <PlusCircleIcon className="group-hover:text-slate-400 transition stroke-1 w-12 h-12 dark:text-slate-500" />
+                        <Icons.plus className="group-hover:fill-slate-400 transition stroke-1 w-12 h-12 fill-slate-500" />
                         <input
                           {...props}
                           ref={ref}
@@ -250,4 +300,3 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
 FileInput.displayName = "FileInput"
 
 export { FileInput }
-

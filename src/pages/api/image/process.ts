@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
+import { ImageResponseData } from "@/src/types/api/image"
 
 import { withMethods } from "@/lib/api-middlewares/with-methods"
-import { ImageResponseData } from "@/src/types/api/image"
 
 type PartialReplicateResponse = {
   urls: {
@@ -28,12 +28,6 @@ async function handler(
       .json({ success: false, alt: "", message: "No image data" })
   const imageBase64 = req.body
 
-  const amplifyEnvWorking = !!process.env.REPLICATE_API_KEY
-  if (!amplifyEnvWorking)
-    return res
-      .status(500)
-      .json({ success: false, alt: "", message: "No env variable recognized" })
-
   try {
     const startResponse = await fetch(
       "https://api.replicate.com/v1/predictions",
@@ -50,7 +44,7 @@ async function handler(
             "9a34a6339872a03f45236f114321fb51fc7aa8269d38ae0ce5334969981e4cd8",
 
           input: {
-            model: "coco",
+            model: "conceptual-captions",
             use_beam_search: false,
             image: imageBase64,
           },

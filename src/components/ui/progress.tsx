@@ -16,7 +16,7 @@ const indicatorVariants = cva("h-full w-full flex-1 transition-all", {
   variants: {
     variant: {
       default: "bg-slate-900 dark:bg-slate-400",
-      isError: "bg-red-500 dark:bg-red-400",
+      isError: "bg-red-500 dark:bg-red-500",
       isSuccess: "bg-green-500 dark:bg-green-400",
     },
   },

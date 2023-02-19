@@ -1,0 +1,59 @@
+import { NextApiRequest, NextApiResponse } from "next"
+import { MAX_FILE_SIZE } from "@/src/config/image"
+import { AWS_BUCKET_NAME } from "@/src/config/s3"
+import { withMethods } from "@/src/lib/api-middlewares/with-methods"
+import { s3 } from "@/src/lib/s3"
+import { fileTypeSchema } from "@/src/lib/validations/s3"
+import { PresignResponseData } from "@/src/types/api/image"
+import { nanoid } from "nanoid"
+import { z } from "zod"
+
+const handler = async (
+  req: NextApiRequest,
+  res: NextApiResponse<PresignResponseData>
+) => {
+  const reqFileType = req.body.fileType
+  const fileId = nanoid()
+
+  try {
+    // validate file extension, will throw if invalid
+    const fileType = fileTypeSchema.parse(reqFileType)
+    const fileExtension = fileType.split("/")[1]
+    const key = `${fileId}.${fileExtension}`
+
+    // Create a presigned POST request to upload the file to S3
+
+    const { url: postUrl, fields } = (await new Promise((resolve, reject) => {
+      s3.createPresignedPost(
+        {
+          Bucket: AWS_BUCKET_NAME,
+          Fields: { key },
+          Expires: 60,
+          Conditions: [
+            ["content-length-range", 0, MAX_FILE_SIZE],
+            ["starts-with", "$Content-Type", "image/"],
+          ],
+        },
+        (err, signed) => {
+          if (err) return reject(err)
+          resolve(signed)
+        }
+      )
+    })) as { url: string; fields: any }
+
+    const getUrl = await s3.getSignedUrlPromise("getObject", {
+      Bucket: AWS_BUCKET_NAME,
+      Key: key,
+    })
+
+    return res.status(200).json({ postUrl, getUrl, fields })
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(415).json(error.issues)
+    }
+
+    return res.status(500).end()
+  }
+}
+
+export default withMethods(["POST"], handler)

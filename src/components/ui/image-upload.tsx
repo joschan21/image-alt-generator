@@ -1,49 +1,60 @@
 "use client"
 
-import { forwardRef, useEffect, useState } from "react"
+import { forwardRef } from "react"
 import Image from "next/image"
-// import { useUploadForm } from "@/src/hooks/use-upload-form"
 import { useUploadFile } from "@/src/hooks/use-upload-file"
+import { ImageResponseData } from "@/src/types/api/image"
 import { Progress } from "@/ui/progress"
 import { Loader2 } from "lucide-react"
 
-import { ImageResponseData } from "@/src/types/api/image"
 import { cn } from "@/lib/utils"
+import { Icons } from "@/components/icons"
 
 interface ImageUploadProps extends React.HTMLAttributes<HTMLTableRowElement> {
-  image: File
+  name: string
+  size: number
+  getUrl: string
+  error?: boolean | undefined
 }
 
 const ImageUpload = forwardRef<HTMLTableRowElement, ImageUploadProps>(
-  ({ image, className, ...props }, ref) => {
-    const [previewUrl, setPreviewUrl] = useState<string>("")
-
-    const { data, progress, isLoading, error } =
-      useUploadFile<ImageResponseData>("/api/image/process", image)
-
-    // generate preview url
-    useEffect(() => {
-      setPreviewUrl(URL.createObjectURL(image))
-      return () => URL.revokeObjectURL(previewUrl)
-    }, [image])
+  ({ getUrl, error, name, size, className, ...props }, ref) => {
+    const {
+      data,
+      progress,
+      isLoading,
+      error: processingError,
+    } = useUploadFile<ImageResponseData>("/api/image/process", getUrl, {
+      disabled: error,
+    })
 
     return (
       <tr ref={ref} {...props} className={cn("", className)}>
         <td className="px-6 py-4 whitespace-nowrap text-sm dark:text-slate-400">
           <div className="relative flex h-12 w-20">
-            {previewUrl ? (
+            {error ? (
+              <div className="flex w-full justify-center items-center">
+                <Icons.redx className="h-6 w-6" />
+              </div>
+            ) : (
               <Image
                 style={{ objectFit: "contain" }}
-                src={previewUrl}
+                src={getUrl}
                 fill
-                alt={image.name}
+                alt={name}
               />
-            ) : null}
+            )}
           </div>
         </td>
         <td className="px-6 py-4 truncate whitespace-normal text-sm font-medium dark:text-slate-400 ">
           <div className="">
-            <p className="dark:text-slate-300">{image.name}</p>
+            <p
+              className={cn("dark:text-slate-300", {
+                "dark:text-red-500": error,
+              })}
+            >
+              {name}
+            </p>
             {data ? (
               <p>{data.alt}</p>
             ) : isLoading ? (
@@ -51,14 +62,21 @@ const ImageUpload = forwardRef<HTMLTableRowElement, ImageUploadProps>(
             ) : null}
           </div>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm dark:text-slate-400 ">
-          {(image.size / 1000).toFixed(0)} KB
+        <td
+          className={cn(
+            "px-6 py-4 whitespace-nowrap text-sm dark:text-slate-400",
+            {
+              "dark:text-red-500": error,
+            }
+          )}
+        >
+          {(size / 1000).toFixed(0)} KB
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-sm dark:text-slate-400 ">
           <Progress
             className={cn("w-full h-2")}
             value={progress}
-            isError={!!error}
+            isError={!!error || !!processingError}
           />
         </td>
       </tr>

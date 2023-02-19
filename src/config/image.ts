@@ -1,1 +1,1 @@
-export const maxImgSize = 4 * 1024 * 1024 // 4MB
+export const MAX_FILE_SIZE = 5000000 // 5MB

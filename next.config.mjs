@@ -10,6 +10,9 @@ const nextConfig = {
       },
     ],
   },
+  images: {
+    domains: ["image-to-alt.s3.eu-central-1.amazonaws.com"],
+  },
 }
 
 export default nextConfig
