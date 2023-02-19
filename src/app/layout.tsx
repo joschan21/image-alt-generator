@@ -1,14 +1,10 @@
-"use client"
-
 import { Inter as FontSans } from "@next/font/google"
 
 import "@/styles/globals.css"
 import Head from "next/head"
 import { Toaster } from "@/ui/toaster"
-import { ThemeProvider } from "next-themes"
 
 import { cn } from "@/lib/utils"
-import { MainNav } from "../components/main-nav"
 import { SiteHeader } from "../components/site-header"
 
 const fontSans = FontSans({
