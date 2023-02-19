@@ -99,7 +99,6 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
         }
       } catch (error) {
         // already handled
-        console.log(error)
       }
     }
 
@@ -143,7 +142,6 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
           e.dataTransfer.clearData()
         } catch (error) {
           // already handled
-          console.log(error)
         }
       }
     }
