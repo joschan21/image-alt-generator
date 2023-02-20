@@ -52,7 +52,7 @@ const handler = async (
       return res.status(415).json(error.issues)
     }
 
-    return res.status(500).end()
+    return res.status(500).end(error)
   }
 }
 
