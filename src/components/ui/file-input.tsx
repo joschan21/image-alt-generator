@@ -149,7 +149,7 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
       <form
         onSubmit={(e) => e.preventDefault()}
         onDragEnter={handleDrag}
-        className="flex h-full items-center w-2/3 justify-start"
+        className="flex h-full items-center w-full lg:w-2/3 justify-start"
       >
         <label
           htmlFor="dropzone-file"

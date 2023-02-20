@@ -46,6 +46,22 @@ const page: FC = () => {
           <p>Available soon</p>
         </TooltipContent>
       </Tooltip>
+
+      {/* Legal disclaimers */}
+      <div className="flex flex-col gap-4 mt-12">
+        <p className="text-slate-400 text-sm">
+          All images are used solely for alt-generation and are automatically
+          deleted after 24h.
+        </p>
+        <div className="flex items-center gap-4">
+          <Button href="/terms" className={buttonVariants({ variant: "link", size: "sm" })}>
+            Terms
+          </Button>
+          <Button href="/privacy-policy" className={buttonVariants({ variant: "link", size: "sm" })}>
+            Privacy Policy
+          </Button>
+        </div>
+      </div>
     </section>
   )
 }
