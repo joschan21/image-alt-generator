@@ -10,4 +10,4 @@ export type ImageResponseData = {
 export type PresignResponseData =
   | z.infer<typeof s3ResponseSchema>
   | ZodIssue[]
-  | string
+  | { error: string }

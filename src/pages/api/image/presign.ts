@@ -52,7 +52,11 @@ const handler = async (
       return res.status(415).json(error.issues)
     }
 
-    return res.status(500).end(error)
+    if (error instanceof Error) {
+      return res.status(500).json({ error: error.message })
+    }
+
+    return res.status(500).json({ error: "Something went wrong" })
   }
 }
 
