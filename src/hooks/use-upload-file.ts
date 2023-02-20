@@ -7,14 +7,14 @@ interface State<T> {
   data?: T
   isLoading: boolean
   progress?: number
-  error?: "TOO_LARGE" | "INTERNAL_SERVER_ERROR"
+  error?: boolean
 }
 
 // discriminated union type
 type Action<T> =
   | { type: "loading" }
   | { type: "fetched"; payload: T }
-  | { type: "error"; payload: "TOO_LARGE" | "INTERNAL_SERVER_ERROR" }
+  | { type: "error"; payload: boolean }
   | { type: "progress"; payload: number }
 
 type Options = {
@@ -59,7 +59,7 @@ export const useUploadFile = <T = unknown>(
 
   useEffect(() => {
     // Do nothing if the url is not given
-    if (!url) return
+    if (!url || disabled) return
 
     cancelRequest.current = false
 
@@ -88,7 +88,7 @@ export const useUploadFile = <T = unknown>(
       } catch (error) {
         if (cancelRequest.current) return
 
-        dispatch({ type: "error", payload: "INTERNAL_SERVER_ERROR" })
+        dispatch({ type: "error", payload: true })
 
         toast({
           title: "Something went wrong.",
@@ -97,7 +97,7 @@ export const useUploadFile = <T = unknown>(
       }
     }
 
-    if (!disabled) void fetchData()
+    void fetchData()
 
     // Use the cleanup function for avoiding a possible...
     // ...state update after the component was unmounted

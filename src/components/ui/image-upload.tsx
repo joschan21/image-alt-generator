@@ -76,7 +76,7 @@ const ImageUpload = forwardRef<HTMLTableRowElement, ImageUploadProps>(
           <Progress
             className={cn("w-full h-2")}
             value={progress}
-            isError={!!error || !!processingError}
+            isError={error || processingError}
           />
         </td>
       </tr>
