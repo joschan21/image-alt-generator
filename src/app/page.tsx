@@ -1,17 +1,17 @@
-"use client"
+'use client'
 
-import { FC } from "react"
-import { Button, buttonVariants } from "@/ui/button"
-import { FileInput } from "@/ui/file-input"
+import { FC } from 'react'
+import { Button, buttonVariants } from '@/ui/button'
+import { FileInput } from '@/ui/file-input'
 
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from '@/components/ui/tooltip'
 
 export const metadata = {
-  title: "ImageToAlt - Home",
+  title: 'ImageToAlt - Home',
 }
 
 const page: FC = () => {
@@ -36,7 +36,7 @@ const page: FC = () => {
           <div className="w-fit">
             <Button
               disabled
-              className={buttonVariants({ size: "lg", className: "w-fit" })}
+              className={buttonVariants({ size: 'lg', className: 'w-fit' })}
             >
               Download as CSV
             </Button>
@@ -54,10 +54,16 @@ const page: FC = () => {
           deleted after 24h.
         </p>
         <div className="flex items-center gap-4">
-          <Button href="/terms" className={buttonVariants({ variant: "link", size: "sm" })}>
+          <Button
+            href="/terms"
+            className={buttonVariants({ variant: 'link', size: 'sm' })}
+          >
             Terms
           </Button>
-          <Button href="/privacy-policy" className={buttonVariants({ variant: "link", size: "sm" })}>
+          <Button
+            href="/privacy-policy"
+            className={buttonVariants({ variant: 'link', size: 'sm' })}
+          >
             Privacy Policy
           </Button>
         </div>

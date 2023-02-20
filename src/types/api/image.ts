@@ -1,5 +1,5 @@
-import { s3ResponseSchema } from "@/src/lib/validations/s3"
-import { ZodIssue, z } from "zod"
+import { s3ResponseSchema } from '@/src/lib/validations/s3'
+import { ZodIssue, z } from 'zod'
 
 export type ImageResponseData = {
   success: boolean

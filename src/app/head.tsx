@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC } from 'react'
 
 const head: FC = () => {
   return <title>ImageToAlt - Generate alt tags from images</title>

@@ -1,4 +1,4 @@
-import { MAX_FILE_SIZE } from "../config/image"
+import { MAX_FILE_SIZE } from '../config/image'
 
 export class FileTooLargeError extends Error {
   constructor(

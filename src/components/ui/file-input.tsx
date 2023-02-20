@@ -1,19 +1,19 @@
-"use client"
+'use client'
 
-import { useS3Upload } from "@/src/hooks/use-s3-upload"
-import { useToast } from "@/src/hooks/use-toast"
-import ImageUpload from "@/ui/image-upload"
 import {
   forwardRef,
   useReducer,
   useState,
   type ChangeEvent,
-  type DragEvent
-} from "react"
+  type DragEvent,
+} from 'react'
+import { useS3Upload } from '@/src/hooks/use-s3-upload'
+import { useToast } from '@/src/hooks/use-toast'
+import ImageUpload from '@/ui/image-upload'
 
-import { MAX_FILE_SIZE } from "@/config/image"
-import { cn, validateFileType } from "@/lib/utils"
-import { Icons } from "../icons"
+import { MAX_FILE_SIZE } from '@/config/image'
+import { cn, validateFileType } from '@/lib/utils'
+import { Icons } from '../icons'
 
 interface FileWithUrl {
   name: string
@@ -24,7 +24,7 @@ interface FileWithUrl {
 
 // Reducer action(s)
 const addFilesToInput = () => ({
-  type: "ADD_FILES_TO_INPUT" as const,
+  type: 'ADD_FILES_TO_INPUT' as const,
   payload: [] as FileWithUrl[],
 })
 
@@ -32,7 +32,7 @@ type Action = ReturnType<typeof addFilesToInput>
 type State = FileWithUrl[]
 
 export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {}
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {}
 
 const FileInput = forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => {
@@ -41,13 +41,13 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
     const [dragActive, setDragActive] = useState<boolean>(false)
     const [input, dispatch] = useReducer((state: State, action: Action) => {
       switch (action.type) {
-        case "ADD_FILES_TO_INPUT": {
+        case 'ADD_FILES_TO_INPUT': {
           // do not allow more than 5 files to be uploaded at once
           if (state.length + action.payload.length > 10) {
             toast({
-              title: "Too many files",
+              title: 'Too many files',
               description:
-                "You can only upload a maximum of 5 files at a time.",
+                'You can only upload a maximum of 5 files at a time.',
             })
             return state
           }
@@ -65,9 +65,9 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
     const handleDrag = (e: DragEvent<HTMLFormElement | HTMLDivElement>) => {
       e.preventDefault()
       e.stopPropagation()
-      if (e.type === "dragenter" || e.type === "dragover") {
+      if (e.type === 'dragenter' || e.type === 'dragover') {
         setDragActive(true)
-      } else if (e.type === "dragleave") {
+      } else if (e.type === 'dragleave') {
         setDragActive(false)
       }
     }
@@ -83,14 +83,14 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
           const valid = validateFileType(e.target.files[0])
           if (!valid) {
             toast({
-              title: "Invalid file type",
-              description: "Please upload a valid file type.",
+              title: 'Invalid file type',
+              description: 'Please upload a valid file type.',
             })
             return
           }
 
           const { getUrl, error } = await s3Upload(e.target.files[0])
-          if (!getUrl || error) throw new Error("Error uploading file")
+          if (!getUrl || error) throw new Error('Error uploading file')
 
           const { name, size } = e.target.files[0]
 
@@ -102,7 +102,7 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
     }
 
     const addFilesToState = (files: FileWithUrl[]) => {
-      dispatch({ type: "ADD_FILES_TO_INPUT", payload: files })
+      dispatch({ type: 'ADD_FILES_TO_INPUT', payload: files })
     }
 
     // triggers when file is dropped
@@ -117,8 +117,8 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
 
         if (files.length !== validFiles.length) {
           toast({
-            title: "Invalid file type",
-            description: "Only image files are allowed.",
+            title: 'Invalid file type',
+            description: 'Only image files are allowed.',
           })
         }
 
@@ -128,7 +128,7 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
               const { name, size } = file
               const { getUrl, error } = await s3Upload(file)
 
-              if (!getUrl || error) return { name, size, getUrl: "", error }
+              if (!getUrl || error) return { name, size, getUrl: '', error }
               return { name, size, getUrl }
             })
           )
@@ -154,17 +154,17 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
         <label
           htmlFor="dropzone-file"
           className={cn(
-            "group relative h-full flex flex-col items-center justify-center w-full aspect-video border-2 border-slate-300 border-dashed rounded-lg dark:border-gray-600 transition",
-            { "dark:border-slate-400 dark:bg-slate-800": dragActive },
-            { "h-fit aspect-auto": !noInput },
-            { "items-start justify-start": !noInput },
-            { "dark:hover:border-gray-500 dark:hover:bg-slate-800": noInput }
+            'group relative h-full flex flex-col items-center justify-center w-full aspect-video border-2 border-slate-300 border-dashed rounded-lg dark:border-gray-600 transition',
+            { 'dark:border-slate-400 dark:bg-slate-800': dragActive },
+            { 'h-fit aspect-auto': !noInput },
+            { 'items-start justify-start': !noInput },
+            { 'dark:hover:border-gray-500 dark:hover:bg-slate-800': noInput }
           )}
         >
           <div
             className={cn(
-              "relative w-full h-full flex flex-col items-center justify-center",
-              { "items-start": !noInput }
+              'relative w-full h-full flex flex-col items-center justify-center',
+              { 'items-start': !noInput }
             )}
           >
             {noInput ? (
@@ -294,7 +294,6 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
     )
   }
 )
-FileInput.displayName = "FileInput"
+FileInput.displayName = 'FileInput'
 
 export { FileInput }
-

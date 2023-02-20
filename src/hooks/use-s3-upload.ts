@@ -1,8 +1,8 @@
-import { toast } from "@/hooks/use-toast"
+import { toast } from '@/hooks/use-toast'
 
-import { MAX_FILE_SIZE } from "@/config/image"
-import { FileTooLargeError } from "@/lib/exceptions"
-import { s3ResponseSchema } from "@/lib/validations/s3"
+import { MAX_FILE_SIZE } from '@/config/image'
+import { FileTooLargeError } from '@/lib/exceptions'
+import { s3ResponseSchema } from '@/lib/validations/s3'
 
 interface UseS3UploadReturn {
   s3Upload: (file: File) => Promise<{ getUrl: string | null; error: boolean }>
@@ -10,10 +10,10 @@ interface UseS3UploadReturn {
 
 const uploadFile = async (file: File) => {
   try {
-    const res = await fetch("/api/image/presign", {
-      method: "POST",
+    const res = await fetch('/api/image/presign', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         fileType: file.type,
@@ -26,7 +26,7 @@ const uploadFile = async (file: File) => {
 
     const outboundToS3 = {
       ...fields,
-      "Content-Type": file.type,
+      'Content-Type': file.type,
       file,
     }
 
@@ -39,7 +39,7 @@ const uploadFile = async (file: File) => {
     try {
       // Upload to S3
       await fetch(postUrl, {
-        method: "POST",
+        method: 'POST',
         body: formData,
       })
     } catch (error) {
@@ -52,7 +52,7 @@ const uploadFile = async (file: File) => {
       throw new FileTooLargeError()
     }
 
-    throw new Error("Internal Server Error")
+    throw new Error('Internal Server Error')
   }
 }
 
@@ -70,7 +70,7 @@ export const useS3Upload = (): UseS3UploadReturn => {
     } catch (error) {
       if (error instanceof FileTooLargeError) {
         toast({
-          title: "Image Too Large",
+          title: 'Image Too Large',
           description: error.message,
         })
 
@@ -78,8 +78,8 @@ export const useS3Upload = (): UseS3UploadReturn => {
       }
 
       toast({
-        title: "Internal Server Error",
-        description: "There was an error uploading your image.",
+        title: 'Internal Server Error',
+        description: 'There was an error uploading your image.',
       })
 
       return { getUrl: null, error: true }

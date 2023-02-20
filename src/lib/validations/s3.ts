@@ -1,12 +1,12 @@
-import { ALLOWED_FILE_TYPES } from "@/src/config/s3"
-import { z } from "zod"
+import { ALLOWED_FILE_TYPES } from '@/src/config/s3'
+import { z } from 'zod'
 
 export const fileTypeSchema = z.string().refine(
   (value) => {
     return ALLOWED_FILE_TYPES.includes(value)
   },
   {
-    message: "Invalid file type",
+    message: 'Invalid file type',
   }
 )
 
@@ -22,10 +22,10 @@ export const s3ResponseSchema = z.object({
   postUrl: z.string(),
   fields: z.object({
     Policy: z.string(),
-    "X-Amz-Algorithm": z.string(),
-    "X-Amz-Credential": z.string(),
-    "X-Amz-Date": z.string(),
-    "X-Amz-Signature": z.string(),
+    'X-Amz-Algorithm': z.string(),
+    'X-Amz-Credential': z.string(),
+    'X-Amz-Date': z.string(),
+    'X-Amz-Signature': z.string(),
     bucket: z.string(),
     key: z.string(),
   }),

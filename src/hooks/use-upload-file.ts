@@ -1,7 +1,7 @@
-import { useEffect, useReducer, useRef } from "react"
-import axios from "axios"
+import { useEffect, useReducer, useRef } from 'react'
+import axios from 'axios'
 
-import { useToast } from "./use-toast"
+import { useToast } from './use-toast'
 
 interface State<T> {
   data?: T
@@ -12,10 +12,10 @@ interface State<T> {
 
 // discriminated union type
 type Action<T> =
-  | { type: "loading" }
-  | { type: "fetched"; payload: T }
-  | { type: "error"; payload: boolean }
-  | { type: "progress"; payload: number }
+  | { type: 'loading' }
+  | { type: 'fetched'; payload: T }
+  | { type: 'error'; payload: boolean }
+  | { type: 'progress'; payload: number }
 
 type Options = {
   disabled: boolean | undefined
@@ -42,13 +42,13 @@ export const useUploadFile = <T = unknown>(
   // Keep state logic separated
   const fetchReducer = (state: State<T>, action: Action<T>): State<T> => {
     switch (action.type) {
-      case "loading":
+      case 'loading':
         return { ...state, isLoading: true }
-      case "fetched":
+      case 'fetched':
         return { ...state, data: action.payload, isLoading: false }
-      case "error":
+      case 'error':
         return { ...state, error: action.payload, isLoading: false }
-      case "progress":
+      case 'progress':
         return { ...state, progress: action.payload }
       default:
         return state
@@ -64,12 +64,12 @@ export const useUploadFile = <T = unknown>(
     cancelRequest.current = false
 
     const fetchData = async () => {
-      dispatch({ type: "loading" })
+      dispatch({ type: 'loading' })
 
       try {
         const res = await axios.post(url, resourceUrl, {
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
 
           onUploadProgress: (progressEvent) => {
@@ -77,22 +77,22 @@ export const useUploadFile = <T = unknown>(
               (progressEvent.loaded * 100) / progressEvent.total!
             )
 
-            dispatch({ type: "progress", payload: percentCompleted })
+            dispatch({ type: 'progress', payload: percentCompleted })
           },
         })
 
         const data = res.data as T
         if (cancelRequest.current) return
 
-        dispatch({ type: "fetched", payload: data })
+        dispatch({ type: 'fetched', payload: data })
       } catch (error) {
         if (cancelRequest.current) return
 
-        dispatch({ type: "error", payload: true })
+        dispatch({ type: 'error', payload: true })
 
         toast({
-          title: "Something went wrong.",
-          description: "Please try again later.",
+          title: 'Something went wrong.',
+          description: 'Please try again later.',
         })
       }
     }

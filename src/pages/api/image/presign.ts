@@ -1,12 +1,12 @@
-import { NextApiRequest, NextApiResponse } from "next"
-import { MAX_FILE_SIZE } from "@/src/config/image"
-import { S3_BUCKET_NAME } from "@/src/config/s3"
-import { withMethods } from "@/src/lib/api-middlewares/with-methods"
-import { s3 } from "@/src/lib/s3"
-import { fileTypeSchema } from "@/src/lib/validations/s3"
-import { PresignResponseData } from "@/src/types/api/image"
-import { nanoid } from "nanoid"
-import { z } from "zod"
+import { NextApiRequest, NextApiResponse } from 'next'
+import { MAX_FILE_SIZE } from '@/src/config/image'
+import { S3_BUCKET_NAME } from '@/src/config/s3'
+import { withMethods } from '@/src/lib/api-middlewares/with-methods'
+import { s3 } from '@/src/lib/s3'
+import { fileTypeSchema } from '@/src/lib/validations/s3'
+import { PresignResponseData } from '@/src/types/api/image'
+import { nanoid } from 'nanoid'
+import { z } from 'zod'
 
 const handler = async (
   req: NextApiRequest,
@@ -18,7 +18,7 @@ const handler = async (
   try {
     // validate file extension, will throw if invalid
     const fileType = fileTypeSchema.parse(reqFileType)
-    const fileExtension = fileType.split("/")[1]
+    const fileExtension = fileType.split('/')[1]
     const key = `${fileId}.${fileExtension}`
 
     // Create a presigned POST request to upload the file to S3
@@ -29,8 +29,8 @@ const handler = async (
           Fields: { key },
           Expires: 60,
           Conditions: [
-            ["content-length-range", 0, MAX_FILE_SIZE],
-            ["starts-with", "$Content-Type", "image/"],
+            ['content-length-range', 0, MAX_FILE_SIZE],
+            ['starts-with', '$Content-Type', 'image/'],
           ],
         },
         (err, signed) => {
@@ -40,7 +40,7 @@ const handler = async (
       )
     })) as { url: string; fields: any }
 
-    const getUrl = await s3.getSignedUrlPromise("getObject", {
+    const getUrl = await s3.getSignedUrlPromise('getObject', {
       Bucket: S3_BUCKET_NAME,
       Key: key,
     })
@@ -55,8 +55,8 @@ const handler = async (
       return res.status(500).json({ error: error.message })
     }
 
-    return res.status(500).json({ error: "Something went wrong" })
+    return res.status(500).json({ error: 'Something went wrong' })
   }
 }
 
-export default withMethods(["POST"], handler)
+export default withMethods(['POST'], handler)

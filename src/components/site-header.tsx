@@ -1,9 +1,9 @@
-import Link from "next/link"
+import Link from 'next/link'
 
-import { siteConfig } from "@/config/site"
-import { Icons } from "@/components/icons"
-import { MainNav } from "@/components/main-nav"
-import { buttonVariants } from "@/components/ui/button"
+import { siteConfig } from '@/config/site'
+import { Icons } from '@/components/icons'
+import { MainNav } from '@/components/main-nav'
+import { buttonVariants } from '@/components/ui/button'
 
 export function SiteHeader() {
   return (
@@ -19,9 +19,9 @@ export function SiteHeader() {
             >
               <div
                 className={buttonVariants({
-                  size: "sm",
-                  variant: "ghost",
-                  className: "text-slate-700 dark:text-slate-400",
+                  size: 'sm',
+                  variant: 'ghost',
+                  className: 'text-slate-700 dark:text-slate-400',
                 })}
               >
                 <Icons.gitHub className="h-5 w-5" />
@@ -35,9 +35,9 @@ export function SiteHeader() {
             >
               <div
                 className={buttonVariants({
-                  size: "sm",
-                  variant: "ghost",
-                  className: "",
+                  size: 'sm',
+                  variant: 'ghost',
+                  className: '',
                 })}
               >
                 <Icons.youtube className="h-6 w-6" />

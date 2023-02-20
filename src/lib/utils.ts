@@ -1,7 +1,7 @@
-import { ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { ClassValue, clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
-import { ALLOWED_FILE_TYPES } from "../config/s3"
+import { ALLOWED_FILE_TYPES } from '../config/s3'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

@@ -1,15 +1,15 @@
-import { Inter as FontSans } from "@next/font/google"
+import { Inter as FontSans } from '@next/font/google'
 
-import "@/styles/globals.css"
-import { Toaster } from "@/ui/toaster"
+import '@/styles/globals.css'
+import { Toaster } from '@/ui/toaster'
 
-import { cn } from "@/lib/utils"
-import { SiteHeader } from "../components/site-header"
-import { TooltipProvider } from "../components/ui/tooltip"
+import { cn } from '@/lib/utils'
+import { SiteHeader } from '../components/site-header'
+import { TooltipProvider } from '../components/ui/tooltip'
 
 const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-inter",
+  subsets: ['latin'],
+  variable: '--font-inter',
 })
 
 interface RootLayoutProps {
@@ -22,7 +22,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <html
         lang="en"
         className={cn(
-          "dark bg-white font-sans text-slate-900 antialiased",
+          'dark bg-white font-sans text-slate-900 antialiased',
           fontSans.variable
         )}
       >

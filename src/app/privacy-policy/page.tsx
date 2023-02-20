@@ -1,5 +1,5 @@
-import { FC } from "react"
-import Link from "next/link"
+import { FC } from 'react'
+import Link from 'next/link'
 
 const page: FC = () => {
   return (
@@ -48,11 +48,16 @@ const page: FC = () => {
           generating an alt tag and serving it back to you. We do not use your
           images for any other purpose. To provide this service, we use a
           machine learning algorithm provided by Replicate, Inc. You can read
-          more about how Replicate, Inc. uses your data{" "}
-          <Link className="underline text-blue-400" href="https://replicate.com/terms">here</Link>. We require all
-          third-party providers to have adequate technical and organizational
-          measures in place to ensure the security of user data. We do not share
-          user data with any other third parties.
+          more about how Replicate, Inc. uses your data{' '}
+          <Link
+            className="underline text-blue-400"
+            href="https://replicate.com/terms"
+          >
+            here
+          </Link>
+          . We require all third-party providers to have adequate technical and
+          organizational measures in place to ensure the security of user data.
+          We do not share user data with any other third parties.
         </p>
         <h2 className="text-xl font-bold mb-2">
           How We Protect Your Information
