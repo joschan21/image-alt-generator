@@ -22,14 +22,6 @@ const handler = async (
     const key = `${fileId}.${fileExtension}`
 
     // Create a presigned POST request to upload the file to S3
-
-    // debug env variables
-    if (!process.env.S3_REGION) throw new Error("S3_REGION is undefined")
-    if (!process.env.S3_ACCESS_KEY_ID)
-      throw new Error("S3_ACCESS_KEY_ID is undefined")
-    if (!process.env.S3_SECRET_ACCESS_KEY)
-      throw new Error("S3_SECRET_ACCESS_KEY is undefined")
-
     const { url: postUrl, fields } = (await new Promise((resolve, reject) => {
       s3.createPresignedPost(
         {
