@@ -13,10 +13,11 @@ const page: FC = () => {
           ImageToAlt Terms and Conditions
         </h1>
         <p className="mb-4">
-          These terms and conditions ("Terms") apply to your use of the
-          ImageToAlt app ("App") and the alt tag generation service ("Service")
-          provided by ImageToAlt ("we" or "us"). By using the App or the
-          Service, you agree to be bound by these Terms.
+          These terms and conditions (&quot;Terms&quot;) apply to your use of
+          the ImageToAlt app (&quot;App&quot;) and the alt tag generation
+          service (&quot;Service&quot;) provided by ImageToAlt (&quot;we&quot;
+          or &quot;us&quot;). By using the App or the Service, you agree to be
+          bound by these Terms.
         </p>
         <h2 className="text-xl font-bold mb-2">
           Use of the App and the Service
@@ -37,7 +38,7 @@ const page: FC = () => {
         </p>
         <h2 className="text-xl font-bold mb-2">Disclaimer of Liability</h2>
         <p className="mb-4">
-          The App and the Service are provided "as is" and without warranty of
+          The App and the Service are provided &quot;as is&quot; and without warranty of
           any kind. We make no representations or warranties of any kind,
           express or implied, about the completeness, accuracy, reliability,
           suitability or availability with respect to the App or the Service or
@@ -58,7 +59,7 @@ const page: FC = () => {
         <p className="mb-4">
           You agree to indemnify and hold ImageToAlt, its affiliates, officers,
           agents, and other partners and employees, harmless from any loss,
-          liability, claim or demand, including reasonable attorneys' fees, made
+          liability, claim or demand, including reasonable attorneys&apos; fees, made
           by any third party due to or arising out of your use of the App or the
           Service.
         </p>
@@ -77,7 +78,7 @@ const page: FC = () => {
         <p className="mb-4">
           We reserve the right to modify these Terms at any time. If we make
           changes to these Terms, we will post the revised Terms on the App and
-          update the "Last Updated" date at the top of these Terms. By
+          update the &quot;Last Updated&quot; date at the top of these Terms. By
           continuing to use the App and the Service after the revised Terms
           become effective, you agree to be bound by the revised Terms.
         </p>

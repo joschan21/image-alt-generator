@@ -21,7 +21,7 @@ const page: FC = () => {
           about your device, including information about your web browser, IP
           address, time zone, and some of the cookies that are installed on your
           device. We refer to this automatically-collected information as
-          "Device Information".
+          &quot;Device Information&quot;.
         </p>
         <p className="mb-4">
           We collect Device Information using the following technologies:
