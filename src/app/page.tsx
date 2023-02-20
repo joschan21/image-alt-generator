@@ -1,11 +1,13 @@
+"use client"
+
+import { FC } from "react"
 import { Button, buttonVariants } from "@/ui/button"
 import { FileInput } from "@/ui/file-input"
-import { FC } from "react"
 
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger
+  TooltipTrigger,
 } from "@/components/ui/tooltip"
 
 export const metadata = {

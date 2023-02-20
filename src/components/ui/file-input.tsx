@@ -1,16 +1,15 @@
 "use client"
 
+import { useS3Upload } from "@/src/hooks/use-s3-upload"
+import { useToast } from "@/src/hooks/use-toast"
+import ImageUpload from "@/ui/image-upload"
 import {
   forwardRef,
   useReducer,
   useState,
   type ChangeEvent,
-  type DragEvent,
+  type DragEvent
 } from "react"
-import { ALLOWED_FILE_TYPES } from "@/src/config/s3"
-import { useS3Upload } from "@/src/hooks/use-s3-upload"
-import { useToast } from "@/src/hooks/use-toast"
-import ImageUpload from "@/ui/image-upload"
 
 import { MAX_FILE_SIZE } from "@/config/image"
 import { cn, validateFileType } from "@/lib/utils"
@@ -298,3 +297,4 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(
 FileInput.displayName = "FileInput"
 
 export { FileInput }
+
